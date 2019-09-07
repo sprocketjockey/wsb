@@ -5,13 +5,26 @@ import requests
 
 def serverHelloWorld(server_config) :
     print("Server Hello World")
-    url = server_config["base_url"] + "/stock/aapl/quote" + server_config["api_key"]
+    url = server_config["base_url"] + "stock/aapl/quote"
+    url = url + server_config["api_key"]
 
+    print(url)
     getURL(url)
 
 def timeSeries(server_config):
     print("Time Series options")
-    url = server_config["base_url"] + "/time-series" + server_config["api_key"]
+    url = server_config["base_url"] + "stock/aapl/chart/1y"
+    url = url + server_config["api_key"]
+    
+    print(url)
+    getURL(url)
+
+
+def getSymbols(server_config):
+    print("Symbols")
+    url = server_config["base_url"] + "ref-data/symbols"
+    url = url + server_config["api_key"]
+
     print(url)
     #getURL(url)
 
@@ -41,4 +54,6 @@ if __name__ == "__main__":
 
     #serverHelloWorld(server_config)
 
-    timeSeries(server_config)
+    #timeSeries(server_config)
+
+    getSymbols(server_config)

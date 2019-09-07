@@ -14,8 +14,8 @@ def disconnect_database(db_cursor, db_connection):
     db_connection.close()
 
 def configure_database(db_cursor):
-    db_cursor.execute("DROP TABLE IF EXISTS sp500")
-    db_cursor.execute("CREATE TABLE sp500 ("
+    db_cursor.execute("DROP TABLE IF EXISTS spy")
+    db_cursor.execute("CREATE TABLE spy ("
                       "date date, "
                       "open numeric(12,2), "
                       "high numeric(12,2), "
@@ -23,6 +23,11 @@ def configure_database(db_cursor):
                       "close numeric(12,2), "
                       "adj_close numeric(12,2), "
                       "volume bigint)")
+    
+    db_cursor.execute("DROP TABLE IF EXISTS spy_div")
+    db_cursor.execute("CREATE TABLE spy_div ("
+                      "date date, "
+                      "div numeric(12,2))")
     
 
 def main():

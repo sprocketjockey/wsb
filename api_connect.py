@@ -29,6 +29,10 @@ class APIConnector():
         response = requests.get(url)
         return response.json()
     
-    def getAPIEndpoint(self, end_point):
+    def getAPIData(self, end_point):
         url = self.generateURL(end_point)
+        return self.getURL(url)
+
+    def getSymbolData(self) :
+        url = self.generateURL("/ref-data/symbols")
         return self.getURL(url)

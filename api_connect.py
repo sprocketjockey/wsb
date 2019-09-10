@@ -27,7 +27,10 @@ class APIConnector():
 
     def getURL(self, url):
         response = requests.get(url)
-        return response.json()
+        try:
+            return response.json()
+        except json.decoder.JSONDecodeError:
+            pass
     
     def getAPIData(self, end_point):
         url = self.generateURL(end_point)
@@ -36,3 +39,15 @@ class APIConnector():
     def getSymbolData(self) :
         url = self.generateURL("/ref-data/symbols")
         return self.getURL(url)
+
+    def getYearTimeSeries(self, symbol):
+        end_point = "/stock/" + symbol + "/chart/1y"
+        url = self.generateURL(end_point)
+        return self.getURL(url)
+
+    def getMonthTimeSeries(self, symbol):
+        end_point = "/stock/" + symbol + "/chart/1mm"
+        url = self.generateURL(end_point)
+        #print(url)
+        return self.getURL(url)
+    

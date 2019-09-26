@@ -30,6 +30,7 @@ class APIConnector():
         try:
             return response.json()
         except json.decoder.JSONDecodeError:
+            print(url)
             pass
     
     def getAPIData(self, end_point):
@@ -38,6 +39,11 @@ class APIConnector():
 
     def getSymbolData(self) :
         url = self.generateURL("/ref-data/symbols")
+        return self.getURL(url)
+    
+    def getDailyTimeSeries(self, symbol) : 
+        end_point = "/stock/" + symbol + "/chart/5y"
+        url = self.generateURL(end_point)
         return self.getURL(url)
 
     def getYearTimeSeries(self, symbol):

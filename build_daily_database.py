@@ -46,7 +46,7 @@ def getSymbolData(apiConnector) :
             symbolList.put(None)
             break
         else:
-            start_time = time.time()
+
             db_cursor = db_connection.cursor()
             print(symbol)
             ts = apiConnector.getDailyTimeSeries(symbol)
@@ -56,9 +56,6 @@ def getSymbolData(apiConnector) :
                 db_connection.commit()
             else:
                 print("Error: " + symbol)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            #print(elapsed_time)
 
 
 def getSymbolList(db_cursor) :

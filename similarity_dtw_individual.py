@@ -44,7 +44,7 @@ def getPriceData(symbol, db_cursor):
     return priceList
 
 def getBulkPriceData(db_cursor):
-    db_cursor.execute("SELECT symbol, array_agg(close ORDER BY date) FROM timeseries_daily WHERE date >= '2018-09-25' GROUP BY symbol HAVING count(date)= 252;")
+    db_cursor.execute("SELECT symbol, array_agg(close ORDER BY date) FROM timeseries_daily GROUP BY symbol HAVING count(date)= 1258;")
     results = db_cursor.fetchall()
     priceData = {}
     for result in results:
@@ -73,7 +73,7 @@ def normalizeResult(priceArray):
 
     return returnArray
 
-def similarityWorker(symbolList, priceData):
+def similarityWorker(symbol, priceData):
     db_conn = connect_database()
     db_cursor = db_conn.cursor()
     
@@ -83,14 +83,11 @@ def similarityWorker(symbolList, priceData):
         if active_symbol != None:
             a = priceData[active_symbol]
             print(active_symbol)
-            for symbol in symbolList :
-                if symbol != None:
-                    #print(active_symbol + " " + symbol)
-                    b = priceData[symbol]
-                    distance = calculateDistance(a,b)
-                    data = (active_symbol, symbol, distance)
-                    storeSimilarity(db_cursor, data)
-                    db_conn.commit()
+            b = priceData[symbol]
+            distance = calculateDistance(a,b)
+            data = (active_symbol, symbol, distance)
+            storeSimilarity(db_cursor, data)
+            db_conn.commit()
         else:
             symbolQueue.put(None)
             db_conn.close()
@@ -98,16 +95,16 @@ def similarityWorker(symbolList, priceData):
 
 def buildSimilarityTable(db_connection):
         db_cursor = db_connection.cursor()
-        db_cursor.execute("DROP TABLE IF EXISTS dtw_similarity")
-        db_cursor.execute("CREATE TABLE dtw_similarity ("
+        db_cursor.execute("DROP TABLE IF EXISTS dtw_similarity_individual")
+        db_cursor.execute("CREATE TABLE dtw_similarity_individual ("
                           "symbol_a TEXT, "
                           "symbol_b TEXT, "
-                          "dtw_close_dist DOUBLE PRECISION)")
+                          "close_dist DOUBLE PRECISION)")
 
         db_connection.commit()
 
 def storeSimilarity(db_cursor, data):
-    db_cursor.execute("INSERT INTO dtw_similarity (symbol_a, symbol_b, dtw_close_dist) VALUES (%s, %s, %s)",(data[0], data[1], data[2]))
+    db_cursor.execute("INSERT INTO dtw_similarity_individual (symbol_a, symbol_b, close_dist) VALUES (%s, %s, %s)",(data[1], data[0], data[2]))
         
 if __name__ == "__main__" :
     db_connection = connect_database()
@@ -129,8 +126,10 @@ if __name__ == "__main__" :
 
     workers = []
 
+    symbol = 'VTI'
+
     for i in range(16):
-        p = multiprocessing.Process(target = similarityWorker, args=(symbolList, priceData))
+        p = multiprocessing.Process(target = similarityWorker, args=(symbol, priceData))
         workers.append(p)
         p.start()
 
